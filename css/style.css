@@ -1,0 +1,111 @@
+
+
+header.masthead .intro-text .name {
+    font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    text-transform: none; 
+}
+
+@media (min-width: 768px) {
+    header.masthead .intro-text .name {
+        font-size: 3em; 
+    }
+}
+
+header.masthead {
+    background-image: url('../img/background.jpg');
+    background-attachment: fixed;
+    -o-background-size: 100% auto;
+    -webkit-background-size: 100% auto;
+    -moz-background-size: 100% auto;
+    background-size: 100% auto;
+    
+}
+
+@media (min-width: 768px) {
+    header.masthead {
+        padding-top: 400px;
+        padding-bottom: 30px; 
+    }
+}
+
+.intro-text {
+    /* background-color: rgba(56, 60, 68, 0.9); */
+    /* background-color: rgba(73, 88, 103, 0.9); */
+    background: #77aca2;
+    padding-top: 20px;
+}
+
+hr.default,
+hr.default-primary {
+    max-width: 250px;
+    margin: 25px auto 30px;
+    padding: 0;
+    text-align: center;
+    border: none;
+    border-top: solid 5px; 
+}
+
+hr.default-primary {
+    border-color: #2C3E50; 
+}
+
+hr.section-divider {
+    margin: 0;
+}
+
+.navbar-shrink {
+  background: #031926;
+}
+
+.portfolio-description {
+    margin-top: 10px;
+    max-width: 750px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.portfolio-item {
+    position: relative;
+}
+
+#portfolio .portfolio-item .portfolio-link .caption {
+    z-index: 10;
+}
+
+.caption-bottom {
+    position: absolute; 
+    left: 0; 
+    bottom: 0; 
+    width: 100%; 
+    padding: 13px 15px; 
+    background: rgba(3, 25, 38, 0.9); 
+    color: #FFF;
+    font-size: 0.8em;
+}
+
+.portfolio-modal .modal-dialog .modal-content h2 {
+    font-size: 2.5em;
+    text-transform: none;
+}
+
+.portfolio-modal-description {
+    margin-top: 20px;
+}
+
+.portfolio-modal-table {
+    margin: 30px auto 50px auto;
+}
+
+.portfolio-modal-table .cell-left {
+    padding-right: 5px; 
+    text-align: right;
+}
+.portfolio-modal-table .cell-right {
+    padding-left: 5px; 
+    text-align: left;
+}
+
+footer .credits {
+    font-size: 12px; 
+    margin-top: 10px;
+}
