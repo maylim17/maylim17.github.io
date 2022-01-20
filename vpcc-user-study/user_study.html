@@ -1,39 +1,268 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Page Title</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
-<style>
-/* some css */
-</style>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    
+    <title>For Internal Run Only</title>
+
+    <style>
+        body {
+          background-color: #898b88;
+        }
+        
+        #videosContainer {
+            text-align: center;
+        }
+
+        #refVideo, #testVideo {
+            height: 1000px;
+            margin-left: -3px;
+            margin-right: -3px;
+        }
+    </style>
 </head>
 <body>
+    <div id="videosContainer">
+        <video id="refVideo" autoplay muted>
+            <source src="" type="video/mp4">
+        </video>
+    
+        <video id="testVideo" autoplay muted>
+            <source src="" type="video/mp4">
+        </video>
+    </div>
 
-<h1>This is a Heading</h1>
-<p>This is a paragraph.</p>
+    <div class="modal" tabindex="-1" role="dialog" id="introModal" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+            <p>
+                You will watch and rate a total of <span class="totalVideoCount"></span> videos. 
+                <br/><br/>
+                If you are ready, click begin.
+            </p>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-primary" onclick="$('#introModal').modal('hide'); loadAndPlayNextVideo()">
+                Begin
+            </button>
+            </div>
+        </div>
+        </div>
+    </div>
 
-<video autoplay width="320" height="240" controls>
-    <!-- <source src="videos/blackbg/reference/video_redandblack_ConstantFullres_cropped.mp4" type="video/mp4"> -->
-    <source src="https://drive.google.com/file/d/1hAQqQZ_-D2JNmRh7n8eLiGiiYGUXwBS1/preview" type="video/mp4">
-  Your browser does not support the video tag.
-  </video>
+    <div class="modal" tabindex="-1" role="dialog" id="ratingModal" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <p>Video <span id="currentVideoCount"></span>/<span class="totalVideoCount"></span></p>
+            </div>
+            <div class="modal-body">
+                <p>Please rate:</p>
+                <div id="ratingRadios" style="text-align:center">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="1">
+                        <label class="form-check-label" for="inlineRadio1"> 1   </label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="2">
+                        <label class="form-check-label" for="inlineRadio2"> 2   </label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="3">
+                        <label class="form-check-label" for="inlineRadio2"> 3   </label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio4" value="4">
+                        <label class="form-check-label" for="inlineRadio2"> 4   </label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio5" value="5">
+                        <label class="form-check-label" for="inlineRadio2"> 5   </label>
+                    </div>
+                </div>
+                <br/>
+                <div style="margin-left:100px; font-size:small">
+                    <p>
+                        5 - Imperceptible <br/>
+                        4 - Perceptible but not annoying <br/>
+                        3 - Slightly annoying <br/>
+                        2 - Annoying <br/>
+                        1 - Very annoying <br/>
+                    </p>
+                </div>
+                <br/>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="$('#ratingModal').modal('hide'); playVideo()">
+                    Replay
+                </button>
+                <button type="button" class="btn btn-primary" onclick="$('#ratingModal').modal('hide'); submitRatingForVideo()">
+                    Submit
+                </button>
+            </div>
+        </div>
+        </div>
+    </div>
 
-<script>
+    <div class="modal" tabindex="-1" role="dialog" id="resultsModal" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p>Final results:</p>
+                <pre style="font-size:small" id="resultsContent"></pre>
+            </div>
+            <div class="modal-footer">
+            <!-- <button type="button" class="btn btn-primary">
+                Return to Homepage
+            </button> -->
+            </div>
+        </div>
+        </div>
+    </div>
 
-    var video_urls = {
-        'blackbg': {
-            'reference': {
-                'redandblack': 'https://drive.google.com/file/d/1hAQqQZ_-D2JNmRh7n8eLiGiiYGUXwBS1/preview',
-                'loot': 'https://drive.google.com/file/d/1FlGqaNNT2gmbPyXh7k_2z7zhgCPaeM4-/preview'
-            },
-            'test': {
-                'redandblack': [
-                    'https://drive.google.com/file/d/1FlGqaNNT2gmbPyXh7k_2z7zhgCPaeM4-/preview'
-                ]
-            }
+    <script>
+        // TO CHANGE ACCORDINGLY //
+        var totalVideosBlackBg = 2;
+        var totalVideosGreyBg = 2;
+
+        var refVideoUrl = '';
+        var testVideoUrl = '';
+        var counterBlackBg = 0;
+        var counterGreyBg = 0;
+        var results = [];   // { refVideoUrl: .. , testVideoUrl: .. , rating: .. }
+
+        var refVideoFolderBlackBg = "videos/blackbg/reference";
+        var refVideoFolderGreyBg = "videos/greybg/reference";
+        var refVideoFolder = ""
+
+        var refVideoFilenames = {
+            'redandblack': 'video_redandblack_ConstantFullres_cropped.mp4',
+            'loot': 'video_loot_ConstantFullres_cropped.mp4',
+            'longdress': 'video_longdress_ConstantFullres_cropped.mp4',
+            'soldier': 'video_soldier_ConstantFullres_cropped.mp4'
         }
-    }
 
-</script>
+        var testVideosBlackBg = ['videos/blackbg/test/video_loot_ConstantR3_cropped.mp4', 'videos/blackbg/test/video_loot_ConstantR4_cropped.mp4', 'videos/blackbg/test/video_loot_ConstantR5_cropped.mp4']
+        var testVideosGreyBg = ['videos/greybg/test/video_redandblack_ConstantR4_cropped.mp4', 'videos/greybg/test/video_redandblack_ConstantR5_cropped.mp4']
+        var testVideosWorking = []
+
+        $( document ).ready(function() {
+            console.log( "Page Ready!" );
+            $('#introModal .totalVideoCount').html(totalVideosBlackBg + totalVideosGreyBg);
+            $('#introModal').modal('show');
+        });
+
+        function loadAndPlayNextVideo() {
+            console.warn( "loadAndPlayNextVideo!" );
+
+            if (counterGreyBg < totalVideosGreyBg) {    // grey bg first
+                if (counterGreyBg == 0) {
+                    testVideosWorking = testVideosGreyBg
+                }
+                counterGreyBg += 1
+                refVideoFolder = refVideoFolderGreyBg
+            } 
+            else if (counterBlackBg < totalVideosBlackBg) {
+                if (counterBlackBg == 0) {
+                    testVideosWorking = testVideosBlackBg
+                }
+                counterBlackBg += 1
+                refVideoFolder = refVideoFolderBlackBg
+            }
+
+            var minIdx = 0;
+            var maxIdx = testVideosWorking.length - 1;
+            var randomIdx = Math.floor(Math.random() * (maxIdx - minIdx + 1) + minIdx)
+            testVideoUrl = testVideosWorking[randomIdx]
+
+            console.log(testVideosWorking)
+            console.log('randomIdx: ' + randomIdx)
+
+            var sequence = testVideoUrl.split("_")[1];
+            refVideoUrl = refVideoFolder + "/" + refVideoFilenames[sequence];
+
+            console.log("refVideoUrl: " + refVideoUrl)
+            console.log("testVideoUrl: " + testVideoUrl)
+
+            // var refVideoUrl = "videos/blackbg/reference/video_redandblack_ConstantFullres_cropped.mp4";
+            // var testVideoUrl = "videos/blackbg/test/video_loot_ConstantFullres_cropped.mp4";
+
+            $('#refVideo source').attr("src", refVideoUrl);
+            $('#testVideo source').attr("src", testVideoUrl);
+
+            $("#refVideo")[0].load();
+            $("#testVideo")[0].load();
+        }
+
+        function playVideo() {
+            $("#refVideo")[0].play();
+            $("#testVideo")[0].play();
+        }
+        
+        $('#testVideo')[0].onended = function() {   // show rating modal
+            $("#ratingRadios input:radio").prop('checked', false); // uncheck all previously checked radio buttons
+            $('#currentVideoCount').html(counterBlackBg + counterGreyBg);
+            $('.totalVideoCount').html(totalVideosBlackBg + totalVideosGreyBg);
+            $('#ratingModal').modal('show');
+        };
+
+        function submitRatingForVideo() {
+            var rating = $('#ratingRadios input:radio:checked').val();
+
+            results.push({
+                'refVideoUrl': refVideoUrl,
+                'testVideoUrl': testVideoUrl,
+                'rating': rating
+            });
+
+            console.log('Rating received, results updated:');
+            console.log(results);
+
+            testVideosRemaining = [];
+            for (var url of testVideosWorking) {
+                if (url != testVideoUrl) {
+                    testVideosRemaining.push(url);
+                }
+            }
+            testVideosWorking = testVideosRemaining;
+
+            // console.log('testVideosWorking updated:');
+            // console.log(testVideosWorking);
+
+            if ((counterGreyBg + counterBlackBg) == (totalVideosGreyBg + totalVideosBlackBg)) {
+                showResults();
+            }
+            else {
+                loadAndPlayNextVideo();
+            }
+            
+        }
+
+        function showResults() {
+            $('#resultsModal #resultsContent').html(JSON.stringify(results, undefined, 4))
+            $('#resultsModal').modal('show');
+        }
+
+        // var video_urls = {
+        //     'blackbg': {
+        //         'reference': {
+        //             'redandblack': 'https://drive.google.com/file/d/1hAQqQZ_-D2JNmRh7n8eLiGiiYGUXwBS1/preview',
+        //             'loot': 'https://drive.google.com/file/d/1FlGqaNNT2gmbPyXh7k_2z7zhgCPaeM4-/preview'
+        //         },
+        //         'test': {
+        //             'redandblack': [
+        //                 'https://drive.google.com/file/d/1FlGqaNNT2gmbPyXh7k_2z7zhgCPaeM4-/preview'
+        //             ]
+        //         }
+        //     }
+        // }
+
+    </script>
 </body>
 </html>
